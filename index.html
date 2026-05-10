@@ -12,6 +12,7 @@
 <style>
 :root{--gd:#2D5016;--gm:#3A7D44;--gl:#52A055;--gp:#E8F5E1;--bg:#F5F0E8;--card:#fff;--side:#EDE8DC;--bd:#E0D9CC;--tx:#2D3020;--txm:#5A5040;--txq:#9A8A70;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+input[type=text],input[type=date],input[type=number]{-webkit-appearance:none;appearance:none;border:1px solid #E0D9CC !important;border-radius:9px;}
 body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx);height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
 .header{background:linear-gradient(135deg,var(--gd) 0%,var(--gm) 60%,var(--gl) 100%);padding:calc(12px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0;position:relative;overflow:hidden;}
 .header::before{content:'';position:absolute;top:-20px;right:-10px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);}
@@ -129,7 +130,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx);heigh
 .modaltitle{font-size:15px;font-weight:700;}
 .closebtn{background:none;border:none;font-size:21px;cursor:pointer;color:var(–txq);}
 .mlabel{display:block;font-size:10px;font-weight:700;color:var(–txq);margin-bottom:5px;letter-spacing:0.5px;}
-input[type=text],input[type=date],input[type=number]{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(–bd);font-size:13px;background:#fff;color:var(–tx);margin-bottom:12px;font-family:inherit;outline:none;}
+input[type=text],input[type=date],input[type=number]{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(–bd) !important;-webkit-appearance:none;appearance:none;font-size:13px;background:#fff;color:var(–tx);margin-bottom:12px;font-family:inherit;outline:none;}
+input:focus{border-color:var(–gm) !important;}
 input:focus{border-color:var(–gm);}
 .photoarea{border:2px dashed var(–bd);border-radius:11px;padding:12px;text-align:center;cursor:pointer;margin-bottom:12px;color:var(–txq);font-size:12px;position:relative;transition:border-color 0.2s;}
 .photoarea:hover{border-color:var(–gm);}
