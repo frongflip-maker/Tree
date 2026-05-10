@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="สมุดต้นไม้">
+<title>สมุดต้นไม้</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gd:#2D5016;--gm:#3A7D44;--gl:#52A055;--gp:#E8F5E1;--bg:#F5F0E8;--card:#fff;--side:#EDE8DC;--bd:#E0D9CC;--tx:#2D3020;--txm:#5A5040;--txq:#9A8A70;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--tx);height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+.header{background:linear-gradient(135deg,var(--gd) 0%,var(--gm) 60%,var(--gl) 100%);padding:calc(12px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-20px;right:-10px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);}
+.htitle{color:#E8F5E1;font-size:18px;font-weight:700;}
+.hsub{color:rgba(232,245,225,0.6);font-size:10px;}
+.hbtns{display:flex;gap:5px;flex-shrink:0;}
+.hbtn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#E8F5E1;border-radius:7px;padding:5px 9px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;display:flex;align-items:center;gap:3px;}
+.vtabs{display:flex;background:rgba(0,0,0,0.2);border-radius:9px;padding:3px;gap:2px;flex-shrink:0;}
+.vtab{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:11px;font-weight:600;background:transparent;color:rgba(232,245,225,0.75);transition:all 0.15s;}
+.vtab.active{background:#fff;color:var(--gd);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:170px;background:var(--side);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;}
+.shead{padding:10px 10px 5px;display:flex;justify-content:space-between;align-items:center;}
+.slabel{font-size:9px;color:var(--txq);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.addplantbtn{width:22px;height:22px;background:var(--gm);color:#fff;border:none;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1;}
+.plist{overflow-y:auto;flex:1;}
+.pitem{padding:7px 10px;cursor:pointer;border-left:3px solid transparent;display:flex;align-items:center;gap:7px;transition:background 0.15s;}
+.pitem.active{background:var(--gd);border-left-color:var(--gl);}
+.pitem:not(.active):hover{background:rgba(0,0,0,0.04);}
+.pthumb{width:30px;height:30px;border-radius:7px;object-fit:cover;flex-shrink:0;}
+.pemoji{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:rgba(255,255,255,0.3);}
+.pname{font-size:12px;font-weight:600;color:var(--tx);}
+.pitem.active .pname{color:#E8F5E1;}
+.pcnt{font-size:9px;color:var(--txq);}
+.pitem.active .pcnt{color:#A8D5A2;}
+.main{flex:1;overflow-y:auto;padding:14px;}
+
+/* Cards */
+.plantcard{background:var(–card);border-radius:14px;padding:14px 18px;margin-bottom:10px;border:1px solid var(–bd);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.pcleft{display:flex;align-items:center;gap:12px;}
+.profilewrap{position:relative;flex-shrink:0;}
+.profileimg{width:56px;height:56px;border-radius:13px;object-fit:cover;border:2px solid var(–bd);display:block;cursor:pointer;}
+.profileemoji{width:56px;height:56px;border-radius:13px;background:var(–gp);border:2px solid var(–bd);display:flex;align-items:center;justify-content:center;font-size:30px;}
+.editbtn{position:absolute;bottom:-4px;right:-4px;width:19px;height:19px;background:var(–gm);border:2px solid #fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;color:#fff;}
+.cardname{font-size:18px;font-weight:700;}
+.carddate{font-size:11px;color:var(–txq);margin-top:2px;}
+.cardnote{font-size:11px;color:#6A7A5A;margin-top:2px;font-style:italic;}
+.cardbtns{display:flex;gap:7px;flex-shrink:0;}
+.logbtn{background:var(–gm);color:#fff;border:none;border-radius:9px;padding:7px 12px;font-size:12px;cursor:pointer;font-weight:600;font-family:inherit;}
+.delbtn{background:#F5EDE8;color:#B85C38;border:1px solid #E8C5B5;border-radius:9px;padding:7px 9px;font-size:13px;cursor:pointer;}
+
+/* Summary */
+.sumgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.sumcard{background:var(–card);border:1px solid var(–bd);border-radius:11px;padding:9px 11px;position:relative;overflow:hidden;}
+.sumcard.overdue{border-color:#F5C5B0;}
+.sumcard.soon{border-color:#F5E4B0;}
+.sumtopbar{position:absolute;top:0;left:0;right:0;height:3px;}
+.sumrow{display:flex;justify-content:space-between;align-items:flex-start;}
+.sumemoji{font-size:17px;margin-bottom:3px;}
+.sumtype{font-size:9px;font-weight:700;color:var(–txq);}
+.sumlast{font-size:11px;color:var(–tx);margin-top:2px;}
+.sumlast.none{color:#C0B8A8;}
+.sumdue{font-size:10px;font-weight:600;margin-top:3px;}
+.suminterval{font-size:9px;color:#B0A890;margin-top:2px;}
+.duebadge{font-size:9px;font-weight:700;border-radius:5px;padding:2px 5px;}
+
+/* Log section */
+.logcard{background:var(–card);border-radius:14px;border:1px solid var(–bd);overflow:hidden;}
+.logsechead{padding:10px 16px;border-bottom:1px solid var(–bd);}
+.logsectitle{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.logsecttxt{font-weight:700;font-size:12px;}
+.clearbtn{background:#F5EDE8;border:none;font-size:10px;color:#B85C38;cursor:pointer;font-family:inherit;font-weight:700;padding:2px 7px;border-radius:5px;}
+.searchbox{position:relative;margin-bottom:7px;}
+.searchbox input{width:100%;padding:7px 28px 7px 30px;border-radius:7px;border:1px solid var(–bd);font-size:12px;font-family:inherit;outline:none;background:#F9F7F3;color:var(–tx);}
+.searchico{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(–txq);}
+.searchclear{position:absolute;right:7px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(–txq);font-size:15px;padding:0;}
+.pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+.pill{display:flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;border:1.5px solid var(–bd);background:#fff;color:var(–txm);font-size:10px;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.pill.active{font-weight:700;}
+.daterange{display:flex;gap:5px;align-items:center;}
+.daterange span{font-size:10px;color:var(–txq);flex-shrink:0;}
+.daterange input{flex:1;padding:5px 7px;border-radius:7px;border:1px solid var(–bd);font-size:10px;font-family:inherit;outline:none;background:#F9F7F3;color:var(–tx);min-width:0;}
+.filtercnt{padding:5px 16px;font-size:10px;color:var(–txq);border-bottom:1px solid #F0EAE0;background:#FDFAF5;}
+.logitem{padding:10px 16px;border-bottom:1px solid #F0EAE0;}
+.logitem:last-child{border-bottom:none;}
+.logitemtop{display:flex;align-items:center;gap:10px;}
+.logicon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.loginfo{flex:1;}
+.logtags{display:flex;gap:5px;align-items:center;margin-bottom:2px;}
+.logbadge{font-size:10px;font-weight:700;border-radius:5px;padding:2px 6px;}
+.logdate{font-size:10px;color:var(–txq);}
+.lognote{font-size:11px;color:var(–txm);}
+.dellogbtn{background:none;border:none;color:#C0B8A8;cursor:pointer;font-size:17px;padding:3px;}
+.logimgs{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.logimgwrap{position:relative;}
+.logimg{width:68px;height:68px;border-radius:9px;object-fit:cover;border:1px solid var(–bd);cursor:pointer;display:block;}
+.logimgdel{position:absolute;top:-5px;right:-5px;width:17px;height:17px;background:#B85C38;color:#fff;border:2px solid #fff;border-radius:50%;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.emptystate{padding:36px;text-align:center;color:var(–txq);font-size:13px;}
+
+/* Timeline */
+.tlpanel{background:var(–card);border-radius:14px;border:1px solid var(–bd);padding:11px 14px;margin-bottom:12px;}
+.tlhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;}
+.tlgroup{margin-bottom:14px;}
+.tldaterow{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.tldatelabel{font-size:10px;font-weight:700;color:var(–txq);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;}
+.tldateline{flex:1;height:1px;background:var(–bd);}
+.tlentries{background:var(–card);border-radius:12px;border:1px solid var(–bd);overflow:hidden;}
+.tlentry{padding:10px 14px;border-bottom:1px solid #F0EAE0;}
+.tlentry:last-child{border-bottom:none;}
+.tlentrytop{display:flex;align-items:flex-start;gap:8px;}
+.tldot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.tlcontent{flex:1;min-width:0;}
+.plantchip{display:inline-flex;align-items:center;gap:4px;margin-bottom:5px;background:#F5F0E8;border:1px solid var(–bd);border-radius:20px;padding:2px 7px 2px 3px;cursor:pointer;font-family:inherit;}
+.plantchipimg{width:16px;height:16px;border-radius:50%;object-fit:cover;}
+.plantchiptxt{font-size:10px;font-weight:700;color:var(–txm);}
+.tlcaretags{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.tlnote{font-size:12px;color:var(–txm);margin-top:2px;}
+.tlimgs{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.tlimg{width:60px;height:60px;border-radius:8px;object-fit:cover;border:1px solid var(–bd);cursor:pointer;}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(30,25,15,0.55);display:flex;align-items:flex-end;justify-content:center;z-index:200;padding-bottom:env(safe-area-inset-bottom);}
+.modal{background:#FDFAF5;border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));width:100%;max-width:500px;max-height:92dvh;overflow-y:auto;}
+.modalhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.modaltitle{font-size:15px;font-weight:700;}
+.closebtn{background:none;border:none;font-size:21px;cursor:pointer;color:var(–txq);}
+.mlabel{display:block;font-size:10px;font-weight:700;color:var(–txq);margin-bottom:5px;letter-spacing:0.5px;}
+input[type=text],input[type=date],input[type=number]{width:100%;padding:9px 11px;border-radius:9px;border:1px solid var(–bd);font-size:13px;background:#fff;color:var(–tx);margin-bottom:12px;font-family:inherit;outline:none;}
+input:focus{border-color:var(–gm);}
+.photoarea{border:2px dashed var(–bd);border-radius:11px;padding:12px;text-align:center;cursor:pointer;margin-bottom:12px;color:var(–txq);font-size:12px;position:relative;transition:border-color 0.2s;}
+.photoarea:hover{border-color:var(–gm);}
+.photoarea input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;margin:0;padding:0;}
+.photoico{font-size:24px;margin-bottom:3px;}
+.profileprev{display:flex;flex-direction:column;align-items:center;gap:7px;margin-bottom:12px;}
+.profileprevimg{width:84px;height:84px;border-radius:16px;object-fit:cover;border:2px solid var(–bd);cursor:pointer;}
+.profileprevemoji{width:84px;height:84px;border-radius:16px;background:var(–gp);border:2px solid var(–bd);display:flex;align-items:center;justify-content:center;font-size:42px;}
+.removephoto{font-size:11px;color:#B85C38;background:none;border:none;cursor:pointer;font-family:inherit;}
+.emojigrid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px;}
+.emojibtn{font-size:20px;padding:4px 7px;border:2px solid var(–bd);border-radius:7px;background:#fff;cursor:pointer;}
+.emojibtn.sel{border-color:var(–gm);background:var(–gp);}
+.typegrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.typebtn{padding:9px;border:2px solid var(–bd);border-radius:9px;background:#fff;cursor:pointer;display:flex;align-items:center;gap:7px;font-family:inherit;transition:all 0.15s;}
+.intervalbox{background:#F4FAF0;border:1px solid #C0D8B0;border-radius:11px;padding:11px 13px;margin-bottom:12px;}
+.intervalrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.intervalrow:last-child{margin-bottom:0;}
+.intervalinput{width:50px;padding:5px 7px;border-radius:7px;border:1.5px solid var(–bd);font-size:12px;text-align:center;font-family:inherit;outline:none;background:#fff;color:var(–tx);margin-bottom:0;}
+.thumbs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:9px;}
+.thumbwrap{position:relative;}
+.thumb{width:60px;height:60px;border-radius:9px;object-fit:cover;border:1px solid var(–bd);}
+.thumbdel{position:absolute;top:-5px;right:-5px;width:17px;height:17px;background:#B85C38;color:#fff;border:2px solid #fff;border-radius:50%;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mactions{display:flex;gap:9px;margin-top:3px;}
+.cancelbtn{flex:1;padding:11px;border:1px solid var(–bd);border-radius:9px;background:#fff;cursor:pointer;font-size:13px;color:var(–txm);font-family:inherit;}
+.confirmbtn{flex:1;padding:11px;border:none;border-radius:9px;background:var(–gm);color:#fff;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;}
+/* Lightbox */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:300;}
+.lightbox img{max-width:95vw;max-height:90dvh;border-radius:11px;object-fit:contain;}
+.lbclose{position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.noplant{text-align:center;padding:60px 20px;color:var(–txq);}
+mark{background:#FFF176;border-radius:2px;padding:0 1px;}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <span style="font-size:24px;flex-shrink:0">🌿</span>
+  <div style="flex:1;min-width:0">
+    <div class="htitle">สมุดต้นไม้</div>
+    <div class="hsub" id="storage-label">บันทึกการดูแลต้นไม้ของฉัน</div>
+  </div>
+  <div class="vtabs">
+    <button class="vtab active" id="tab-plants" onclick="switchView('plants')">🌿 ต้นไม้</button>
+    <button class="vtab" id="tab-timeline" onclick="switchView('timeline')">📅 ไทม์ไลน์</button>
+  </div>
+  <div class="hbtns">
+    <button class="hbtn" onclick="exportData()">📤</button>
+    <label class="hbtn" style="cursor:pointer">📥<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="shead">
+      <span class="slabel" id="plant-count-label">ต้นไม้</span>
+      <button class="addplantbtn" onclick="openAddPlant()">+</button>
+    </div>
+    <div class="plist" id="plant-list"></div>
+  </div>
+  <div class="main" id="main-content"></div>
+</div>
+
+<!-- Plant Modal -->
+
+<div class="overlay" id="modal-plant" style="display:none" onclick="if(event.target===this)closeModal('modal-plant')">
+<div class="modal">
+  <div class="modalhead">
+    <span class="modaltitle" id="modal-plant-title">เพิ่มต้นไม้ใหม่</span>
+    <button class="closebtn" onclick="closeModal('modal-plant')">×</button>
+  </div>
+  <div class="mlabel">รูปต้นไม้ (ไม่บังคับ)</div>
+  <div class="profileprev" id="profile-prev"></div>
+  <div class="photoarea" id="profile-upload">
+    <input type="file" accept="image/*" onchange="handleProfilePhoto(event)">
+    <div class="photoico">📷</div><div>แตะเพื่อเลือกรูป</div>
+  </div>
+  <div class="mlabel">ชื่อต้นไม้</div>
+  <input type="text" id="p-name" placeholder="เช่น มอนสเตอร่า, กุหลาบ...">
+  <div class="mlabel">Emoji (แสดงแทนเมื่อไม่มีรูป)</div>
+  <div class="emojigrid" id="emoji-grid"></div>
+  <div class="mlabel">วันที่ได้มา</div>
+  <input type="date" id="p-date">
+  <div class="mlabel">หมายเหตุ (ไม่บังคับ)</div>
+  <input type="text" id="p-notes" placeholder="...">
+  <div class="mlabel">🔔 รอบการดูแล (เว้นว่างถ้าไม่ใช้)</div>
+  <div class="intervalbox" id="interval-box"></div>
+  <div class="mactions">
+    <button class="cancelbtn" onclick="closeModal('modal-plant')">ยกเลิก</button>
+    <button class="confirmbtn" id="btn-save-plant" onclick="savePlant()">เพิ่มต้นไม้</button>
+  </div>
+</div>
+</div>
+
+<!-- Log Modal -->
+
+<div class="overlay" id="modal-log" style="display:none" onclick="if(event.target===this)closeModal('modal-log')">
+<div class="modal">
+  <div class="modalhead">
+    <span class="modaltitle">เพิ่มบันทึกการดูแล</span>
+    <button class="closebtn" onclick="closeModal('modal-log')">×</button>
+  </div>
+  <div class="mlabel">ประเภท</div>
+  <div class="typegrid" id="type-grid"></div>
+  <div class="mlabel">วันที่</div>
+  <input type="date" id="l-date">
+  <div class="mlabel">รายละเอียด (ไม่บังคับ)</div>
+  <input type="text" id="l-note" placeholder="เช่น ปุ๋ยสูตร 20-20-20...">
+  <div class="mlabel">รูปภาพ (เพิ่มได้หลายรูป)</div>
+  <div class="thumbs" id="log-thumbs"></div>
+  <div class="photoarea">
+    <input type="file" accept="image/*" multiple onchange="handleLogPhotos(event)">
+    <div class="photoico">🖼️</div><div>แตะเพื่อเลือกรูป</div>
+  </div>
+  <div class="mactions">
+    <button class="cancelbtn" onclick="closeModal('modal-log')">ยกเลิก</button>
+    <button class="confirmbtn" onclick="saveLog()">บันทึก</button>
+  </div>
+</div>
+</div>
+
+<!-- Lightbox -->
+
+<div class="lightbox" id="lightbox" style="display:none" onclick="closeLightbox()">
+  <button class="lbclose">×</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<script>
+const CARE_TYPES=[
+  {key:'repot',    label:'เปลี่ยนกระถาง',emoji:'🪴',color:'#8B6914'},
+  {key:'fertilize',label:'ใส่ปุ๋ย',       emoji:'🌱',color:'#3A7D44'},
+  {key:'cutting',  label:'ตัดชำ',          emoji:'✂️',color:'#B85C38'},
+  {key:'newleaf',  label:'ใบใหม่งอก',      emoji:'🍃',color:'#52A055'},
+];
+const EMOJIS=['🌿','🌵','🪷','🌺','🌸','🌻','🌴','🪻','🌾','🌳','🎋','🍀'];
+const KEY='plants_v4';
+
+let plants=[],selectedId=null,viewMode='plants';
+let selEmoji='🌿',selType='repot',editingId=null;
+let pendingProfile=null,pendingLogPhotos=[];
+let pendingIntervals={};
+
+// filters for plant detail
+let pfSearch='',pfType='all',pfFrom='',pfTo='';
+// filters for timeline
+let tfSearch='',tfType='all',tfPlant='all',tfFrom='',tfTo='';
+
+function load(){
+  try{plants=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){plants=[];}
+  if(!plants.length){
+    plants=[{id:1,name:'มอนสเตอร่า',emoji:'🌿',photo:null,acquired:'2024-01-15',notes:'ต้นแรกของสวน',intervals:{},
+      logs:[
+        {id:1,type:'repot',    date:'2025-03-10',note:'ย้ายกระถาง 10 → 12 นิ้ว',photos:[]},
+        {id:2,type:'fertilize',date:'2025-04-20',note:'ปุ๋ยน้ำสูตร 20-20-20',   photos:[]},
+        {id:3,type:'newleaf',  date:'2025-05-01',note:'ใบที่ 8 เริ่มแทง',       photos:[]},
+      ]
+    }];
+    saveAll();
+  }
+  if(!selectedId&&plants.length)selectedId=plants[0].id;
+}
+
+function saveAll(){
+  try{localStorage.setItem(KEY,JSON.stringify(plants));updateStorage();}
+  catch(e){alert('พื้นที่เก็บข้อมูลเต็ม กรุณา Export แล้วลบรูปบางส่วน');}
+}
+
+function updateStorage(){
+  try{
+    const raw=localStorage.getItem(KEY)||'';
+    const kb=Math.round(raw.length/1024);
+    const pct=Math.round(raw.length/(5*1024*1024)*100);
+    document.getElementById('storage-label').textContent=`ข้อมูล ${kb} KB / ~5000 KB (${pct}%)`;
+  }catch(e){}
+}
+
+function today(){return new Date().toISOString().split('T')[0];}
+function fmtDate(d){
+  if(!d)return'-';
+  return new Date(d+'T00:00:00').toLocaleDateString('th-TH',{year:'numeric',month:'short',day:'numeric'});
+}
+function dateLabel(d){
+  const t=today();
+  const y=new Date(Date.now()-86400000).toISOString().split('T')[0];
+  if(d===t)return'วันนี้';if(d===y)return'เมื่อวาน';return fmtDate(d);
+}
+
+function calcDue(lastDate,intervalDays){
+  if(!intervalDays||!lastDate)return{status:'none',daysLeft:0,nextDate:null};
+  const last=new Date(lastDate+'T00:00:00');
+  const next=new Date(last);next.setDate(next.getDate()+intervalDays);
+  const todayMs=new Date(today()+'T00:00:00').getTime();
+  const daysLeft=Math.round((next.getTime()-todayMs)/86400000);
+  const nextDate=next.toISOString().split('T')[0];
+  const status=daysLeft<0?'overdue':daysLeft<=7?'soon':'ok';
+  return{status,daysLeft,nextDate};
+}
+
+function compressImage(file,maxW=700,quality=0.75){
+  return new Promise(res=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const ratio=Math.min(1,maxW/img.width);
+        const w=Math.round(img.width*ratio),h=Math.round(img.height*ratio);
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        res(c.toDataURL('image/jpeg',quality));
+      };img.src=e.target.result;
+    };reader.readAsDataURL(file);
+  });
+}
+
+function highlight(text,term){
+  if(!term)return escHtml(text);
+  const idx=text.toLowerCase().indexOf(term.toLowerCase());
+  if(idx===-1)return escHtml(text);
+  return escHtml(text.slice(0,idx))+'<mark>'+escHtml(text.slice(idx,idx+term.length))+'</mark>'+escHtml(text.slice(idx+term.length));
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ===== RENDER =====
+function render(){
+  document.getElementById('plant-count-label').textContent=`ต้นไม้ (${plants.length})`;
+  document.getElementById('plant-list').innerHTML=plants.map(p=>{
+    const thumb=p.photo
+      ?`<img class="pthumb" src="${p.photo}" alt="">`
+      :`<div class="pemoji">${p.emoji}</div>`;
+    return`<div class="pitem${p.id===selectedId?' active':''}" onclick="selectPlant(${p.id})">
+      ${thumb}<div><div class="pname">${escHtml(p.name)}</div><div class="pcnt">${p.logs.length} รายการ</div></div>
+    </div>`;
+  }).join('');
+
+  const main=document.getElementById('main-content');
+  if(viewMode==='timeline'){main.innerHTML=renderTimeline();return;}
+
+  const p=plants.find(x=>x.id===selectedId);
+  if(!p){main.innerHTML=`<div class="noplant"><div style="font-size:44px;margin-bottom:10px">🌱</div>เพิ่มต้นไม้เพื่อเริ่มบันทึก</div>`;return;}
+
+  const profileEl=p.photo
+    ?`<img class="profileimg" src="${p.photo}" onclick="openLightbox('${p.photo}')" alt="">`
+    :`<div class="profileemoji">${p.emoji}</div>`;
+
+  // summary
+  const sumHTML=CARE_TYPES.map(ct=>{
+    const last=p.logs.filter(l=>l.type===ct.key).sort((a,b)=>b.date.localeCompare(a.date))[0];
+    const due=calcDue(last?.date,p.intervals?.[ct.key]);
+    const barColor=due.status==='overdue'?'#D9603B':due.status==='soon'?'#D4A010':'';
+    const dueText=due.status==='overdue'?`เลยกำหนด ${Math.abs(due.daysLeft)} วัน`
+      :due.status==='soon'?(due.daysLeft===0?'ถึงกำหนดวันนี้!':` ถัดไป: ${fmtDate(due.nextDate)}`)
+      :due.status==='ok'?`ถัดไป: ${fmtDate(due.nextDate)}`:'';
+    const dueColor=due.status==='overdue'?'#D9603B':due.status==='soon'?'#B08010':'#4A8A50';
+    const badge=due.status!=='none'?`<span class="duebadge" style="background:${due.status==='overdue'?'#FEECE8':due.status==='soon'?'#FEF4D9':'#E8F5E1'};color:${dueColor}">${due.status==='overdue'?`เลย${Math.abs(due.daysLeft)}ว`:due.daysLeft===0?'วันนี้!':` อีก${due.daysLeft}ว`}</span>`:'';
+    return`<div class="sumcard ${due.status==='overdue'?'overdue':due.status==='soon'?'soon':''}">
+      ${barColor?`<div class="sumtopbar" style="background:${barColor}"></div>`:''}
+      <div class="sumrow"><div class="sumemoji">${ct.emoji}</div>${badge}</div>
+      <div class="sumtype">${ct.label}</div>
+      <div class="sumlast${last?'':' none'}">${last?`ล่าสุด: ${fmtDate(last.date)}`:'ยังไม่มีบันทึก'}</div>
+      ${dueText?`<div class="sumdue" style="color:${dueColor}">${dueText}</div>`:''}
+      ${p.intervals?.[ct.key]?`<div class="suminterval">รอบ ${p.intervals[ct.key]} วัน</div>`:''}
+    </div>`;
+  }).join('');
+
+  // filter logs
+  const hasFilters=pfSearch||pfType!=='all'||pfFrom||pfTo;
+  const sorted=[...p.logs].sort((a,b)=>b.date.localeCompare(a.date)).filter(l=>{
+    if(pfType!=='all'&&l.type!==pfType)return false;
+    if(pfSearch&&!l.note.toLowerCase().includes(pfSearch.toLowerCase()))return false;
+    if(pfFrom&&l.date<pfFrom)return false;
+    if(pfTo&&l.date>pfTo)return false;
+    return true;
+  });
+
+  const typePills=`<button class="pill${pfType==='all'?' active':''}" style="${pfType==='all'?'border-color:#5A5040;background:#F0EBE0;color:#5A5040;font-weight:700':''}" onclick="setPfType('all')">📋 ทั้งหมด</button>`
+    +CARE_TYPES.map(ct=>`<button class="pill${pfType===ct.key?' active':''}" style="${pfType===ct.key?`border-color:${ct.color};background:${ct.color}18;color:${ct.color};font-weight:700`:''}" onclick="setPfType('${ct.key}')">${ct.emoji} ${ct.label}</button>`).join('');
+
+  const logsHTML=sorted.length?sorted.map((log,idx)=>{
+    const ct=CARE_TYPES.find(c=>c.key===log.type);
+    const imgs=(log.photos||[]).map((b,i)=>
+      `<div class="logimgwrap"><img class="logimg" src="${b}" onclick="openLightbox('${b}')" alt=""><div class="logimgdel" onclick="deleteLogPhoto(${p.id},${log.id},${i})">×</div></div>`
+    ).join('');
+    return`<div class="logitem">
+      <div class="logitemtop">
+        <div class="logicon" style="background:${ct.color}18">${ct.emoji}</div>
+        <div class="loginfo">
+          <div class="logtags"><span class="logbadge" style="color:${ct.color};background:${ct.color}18">${ct.label}</span><span class="logdate">${fmtDate(log.date)}</span></div>
+          ${log.note?`<div class="lognote">${highlight(log.note,pfSearch)}</div>`:''}
+        </div>
+        <button class="dellogbtn" onclick="if(confirm('ลบบันทึกนี้?'))deleteLog(${p.id},${log.id})">×</button>
+      </div>
+      ${imgs?`<div class="logimgs">${imgs}</div>`:''}
+    </div>`;
+  }).join(''):`<div class="emptystate"><div style="font-size:38px;margin-bottom:8px">${hasFilters?'🔍':'🌱'}</div>${hasFilters?'ไม่พบบันทึกที่ตรงกับเงื่อนไข':'ยังไม่มีบันทึก<br>กด "+ บันทึก" เพื่อเพิ่ม'}</div>`;
+
+  main.innerHTML=`
+    <div class="plantcard">
+      <div class="pcleft">
+        <div class="profilewrap">
+          ${profileEl}
+          <div class="editbtn" onclick="openEditPlant(${p.id})">✏</div>
+        </div>
+        <div>
+          <div class="cardname">${escHtml(p.name)}</div>
+          <div class="carddate">ปลูกเมื่อ: ${fmtDate(p.acquired)}</div>
+          ${p.notes?`<div class="cardnote">"${escHtml(p.notes)}"</div>`:''}
+        </div>
+      </div>
+      <div class="cardbtns">
+        <button class="logbtn" onclick="openAddLog()">+ บันทึก</button>
+        <button class="delbtn" onclick="if(confirm('ลบ &quot;${escHtml(p.name)}&quot; และบันทึกทั้งหมด?'))deletePlant(${p.id})">🗑</button>
+      </div>
+    </div>
+    <div class="sumgrid">${sumHTML}</div>
+    <div class="logcard">
+      <div class="logsechead">
+        <div class="logsectitle">
+          <span class="logsecttxt">บันทึกการดูแล</span>
+          ${hasFilters?`<button class="clearbtn" onclick="clearPf()">✕ ล้างตัวกรอง</button>`:''}
+        </div>
+        <div class="searchbox">
+          <span class="searchico">🔍</span>
+          <input type="text" placeholder="ค้นหาในรายละเอียด..." value="${escHtml(pfSearch)}" oninput="pfSearch=this.value;render()">
+          ${pfSearch?`<button class="searchclear" onclick="pfSearch='';render()">×</button>`:''}
+        </div>
+        <div class="pills">${typePills}</div>
+        <div class="daterange">
+          <span>ช่วงวันที่</span>
+          <input type="date" value="${pfFrom}" onchange="pfFrom=this.value;render()">
+          <span>–</span>
+          <input type="date" value="${pfTo}" onchange="pfTo=this.value;render()">
+        </div>
+      </div>
+      ${hasFilters&&sorted.length?`<div class="filtercnt">แสดง ${sorted.length} จาก ${p.logs.length} รายการ</div>`:''}
+      ${logsHTML}
+    </div>`;
+}
+
+function renderTimeline(){
+  // build all entries
+  let all=[];
+  for(const p of plants){
+    for(const log of p.logs){
+      all.push({plantId:p.id,plantName:p.name,plantEmoji:p.emoji,plantPhoto:p.photo,
+        logId:log.id,type:log.type,date:log.date,note:log.note,photos:log.photos||[]});
+    }
+  }
+  all.sort((a,b)=>b.date.localeCompare(a.date));
+
+  const hasFilters=tfSearch||tfType!=='all'||tfPlant!=='all'||tfFrom||tfTo;
+  const filtered=all.filter(e=>{
+    if(tfType!=='all'&&e.type!==tfType)return false;
+    if(tfPlant!=='all'&&e.plantId!==tfPlant)return false;
+    if(tfSearch&&!e.note.toLowerCase().includes(tfSearch.toLowerCase())&&!e.plantName.toLowerCase().includes(tfSearch.toLowerCase()))return false;
+    if(tfFrom&&e.date<tfFrom)return false;
+    if(tfTo&&e.date>tfTo)return false;
+    return true;
+  });
+
+  // group by date
+  const groups=new Map();
+  for(const e of filtered){
+    if(!groups.has(e.date))groups.set(e.date,[]);
+    groups.get(e.date).push(e);
+  }
+  const groupArr=Array.from(groups.entries()).sort((a,b)=>b[0].localeCompare(a[0]));
+
+  const typePills=`<button class="pill${tfType==='all'?' active':''}" style="${tfType==='all'?'border-color:#5A5040;background:#F0EBE0;color:#5A5040;font-weight:700':''}" onclick="setTfType('all')">📋 ทุกประเภท</button>`
+    +CARE_TYPES.map(ct=>`<button class="pill${tfType===ct.key?' active':''}" style="${tfType===ct.key?`border-color:${ct.color};background:${ct.color}18;color:${ct.color};font-weight:700`:''}" onclick="setTfType('${ct.key}')">${ct.emoji} ${ct.label}</button>`).join('');
+
+  const plantPills=plants.length>1?`<div class="pills">
+    <button class="pill${tfPlant==='all'?' active':''}" style="${tfPlant==='all'?'border-color:#3A7D44;background:#E8F5E1;color:#2D5016;font-weight:700':''}" onclick="setTfPlant('all')">🌿 ทุกต้นไม้</button>
+    ${plants.map(p=>`<button class="pill${tfPlant===p.id?' active':''}" style="${tfPlant===p.id?'border-color:#3A7D44;background:#E8F5E1;color:#2D5016;font-weight:700':''}" onclick="setTfPlant(${p.id})">
+      ${p.photo?`<img src="${p.photo}" style="width:14px;height:14px;border-radius:50%;object-fit:cover">`:`<span style="font-size:12px">${p.emoji}</span>`}
+      ${escHtml(p.name)}</button>`).join('')}
+  </div>`:'';
+
+  const tlHTML=groupArr.length?groupArr.map(([date,entries])=>`
+    <div class="tlgroup">
+      <div class="tldaterow"><span class="tldatelabel">${dateLabel(date)}</span><div class="tldateline"></div></div>
+      <div class="tlentries">${entries.map((entry,idx)=>{
+        const ct=CARE_TYPES.find(c=>c.key===entry.type);
+        return`<div class="tlentry">
+          <div class="tlentrytop">
+            <div class="tldot" style="background:${ct.color}"></div>
+            <div class="tlcontent">
+              <button class="plantchip" onclick="selectPlantAndSwitch(${entry.plantId})">
+                ${entry.plantPhoto?`<img class="plantchipimg" src="${entry.plantPhoto}" alt="">`:` <span style="font-size:13px">${entry.plantEmoji}</span>`}
+                <span class="plantchiptxt">${escHtml(entry.plantName)}</span>
+              </button>
+              <div class="tlcaretags">
+                <span style="font-size:14px">${ct.emoji}</span>
+                <span class="logbadge" style="color:${ct.color};background:${ct.color}18;font-size:10px;font-weight:700;border-radius:5px;padding:1px 6px">${ct.label}</span>
+              </div>
+              ${entry.note?`<div class="tlnote">${highlight(entry.note,tfSearch)}</div>`:''}
+              ${entry.photos.length?`<div class="tlimgs">${entry.photos.map(s=>`<img class="tlimg" src="${s}" onclick="openLightbox('${s}')" alt="">`).join('')}</div>`:''}
+            </div>
+            <button class="dellogbtn" onclick="if(confirm('ลบบันทึกนี้?'))deleteTlLog(${entry.plantId},${entry.logId})">×</button>
+          </div>
+        </div>`;
+      }).join('')}</div>
+    </div>`).join(''):`<div class="emptystate"><div style="font-size:44px;margin-bottom:10px">${hasFilters?'🔍':'🌱'}</div>${hasFilters?'ไม่พบรายการที่ตรงกับเงื่อนไข':'ยังไม่มีบันทึกการดูแล'}</div>`;
+
+  return`<div class="tlpanel">
+    <div class="tlhead">
+      <span style="font-weight:700;font-size:12px">📅 ไทม์ไลน์ทุกต้นไม้ <span style="font-weight:400;color:var(--txq);font-size:10px">${filtered.length} รายการ${all.length!==filtered.length?' / '+all.length:''}</span></span>
+      ${hasFilters?`<button class="clearbtn" onclick="clearTf()">✕ ล้างตัวกรอง</button>`:''}
+    </div>
+    <div class="searchbox">
+      <span class="searchico">🔍</span>
+      <input type="text" placeholder="ค้นหาชื่อต้นไม้ หรือรายละเอียด..." value="${escHtml(tfSearch)}" oninput="tfSearch=this.value;render()">
+      ${tfSearch?`<button class="searchclear" onclick="tfSearch='';render()">×</button>`:''}
+    </div>
+    <div class="pills">${typePills}</div>
+    ${plantPills}
+    <div class="daterange">
+      <span>ช่วงวันที่</span>
+      <input type="date" value="${tfFrom}" onchange="tfFrom=this.value;render()">
+      <span>–</span>
+      <input type="date" value="${tfTo}" onchange="tfTo=this.value;render()">
+    </div>
+  </div>${tlHTML}`;
+}
+
+// actions
+function selectPlant(id){selectedId=id;pfSearch='';pfType='all';pfFrom='';pfTo='';render();}
+function selectPlantAndSwitch(id){selectedId=id;switchView('plants');}
+function switchView(v){
+  viewMode=v;
+  document.getElementById('tab-plants').classList.toggle('active',v==='plants');
+  document.getElementById('tab-timeline').classList.toggle('active',v==='timeline');
+  render();
+}
+function setPfType(t){pfType=t;render();}
+function clearPf(){pfSearch='';pfType='all';pfFrom='';pfTo='';render();}
+function setTfType(t){tfType=t;render();}
+function setTfPlant(id){tfPlant=id;render();}
+function clearTf(){tfSearch='';tfType='all';tfPlant='all';tfFrom='';tfTo='';render();}
+
+function deletePlant(id){
+  plants=plants.filter(p=>p.id!==id);
+  selectedId=plants.length?plants[0].id:null;
+  saveAll();render();
+}
+function deleteLog(plantId,logId){
+  plants=plants.map(p=>p.id===plantId?{...p,logs:p.logs.filter(l=>l.id!==logId)}:p);
+  saveAll();render();
+}
+function deleteTlLog(plantId,logId){deleteLog(plantId,logId);}
+function deleteLogPhoto(plantId,logId,idx){
+  plants=plants.map(p=>{
+    if(p.id!==plantId)return p;
+    return{...p,logs:p.logs.map(l=>{
+      if(l.id!==logId)return l;
+      const photos=[...(l.photos||[])];photos.splice(idx,1);return{...l,photos};
+    })};
+  });saveAll();render();
+}
+
+// modals
+function openModal(id){document.getElementById(id).style.display='flex';}
+function closeModal(id){document.getElementById(id).style.display='none';}
+
+function openAddPlant(){
+  editingId=null;selEmoji='🌿';pendingProfile=null;pendingIntervals={};
+  document.getElementById('p-name').value='';
+  document.getElementById('p-date').value=today();
+  document.getElementById('p-notes').value='';
+  document.getElementById('modal-plant-title').textContent='เพิ่มต้นไม้ใหม่';
+  document.getElementById('btn-save-plant').textContent='เพิ่มต้นไม้';
+  renderEmojiGrid();renderProfilePrev();renderIntervalBox();
+  openModal('modal-plant');
+  setTimeout(()=>document.getElementById('p-name').focus(),100);
+}
+function openEditPlant(id){
+  const p=plants.find(x=>x.id===id);if(!p)return;
+  editingId=id;selEmoji=p.emoji;pendingProfile=p.photo||null;
+  pendingIntervals={...(p.intervals||{})};
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-date').value=p.acquired;
+  document.getElementById('p-notes').value=p.notes||'';
+  document.getElementById('modal-plant-title').textContent='แก้ไขต้นไม้';
+  document.getElementById('btn-save-plant').textContent='บันทึก';
+  renderEmojiGrid();renderProfilePrev();renderIntervalBox();
+  openModal('modal-plant');
+}
+function renderEmojiGrid(){
+  document.getElementById('emoji-grid').innerHTML=EMOJIS.map(em=>
+    `<button class="emojibtn${em===selEmoji?' sel':''}" onclick="pickEmoji('${em}')">${em}</button>`
+  ).join('');
+}
+function pickEmoji(em){selEmoji=em;renderEmojiGrid();if(!pendingProfile)renderProfilePrev();}
+function renderProfilePrev(){
+  const wrap=document.getElementById('profile-prev');
+  const area=document.getElementById('profile-upload');
+  if(pendingProfile){
+    wrap.innerHTML=`<img class="profileprevimg" src="${pendingProfile}" alt=""><button class="removephoto" onclick="pendingProfile=null;renderProfilePrev()">✕ ลบรูป</button>`;
+    area.style.display='none';
+  }else{
+    wrap.innerHTML=`<div class="profileprevemoji">${selEmoji}</div>`;
+    area.style.display='';
+  }
+}
+function renderIntervalBox(){
+  document.getElementById('interval-box').innerHTML=CARE_TYPES.map(ct=>`
+    <div class="intervalrow">
+      <span style="font-size:17px;width:22px;text-align:center;flex-shrink:0">${ct.emoji}</span>
+      <span style="flex:1;font-size:12px">${ct.label}</span>
+      <span style="font-size:10px;color:var(--txq)">ทุก</span>
+      <input class="intervalinput" type="number" min="1" placeholder="—" value="${pendingIntervals[ct.key]||''}"
+        style="border-color:${pendingIntervals[ct.key]?ct.color:'var(--bd)'}"
+        onchange="pendingIntervals['${ct.key}']=parseInt(this.value)||undefined;this.style.borderColor=pendingIntervals['${ct.key}']?'${ct.color}':'var(--bd)'">
+      <span style="font-size:10px;color:var(--txq)">วัน</span>
+    </div>`).join('');
+}
+async function handleProfilePhoto(e){
+  const file=e.target.files[0];if(!file)return;
+  pendingProfile=await compressImage(file,400,0.82);renderProfilePrev();
+}
+function savePlant(){
+  const name=document.getElementById('p-name').value.trim();if(!name)return;
+  const intervals={};
+  for(const ct of CARE_TYPES){const v=pendingIntervals[ct.key];if(v&&v>0)intervals[ct.key]=v;}
+  const data={name,emoji:selEmoji,photo:pendingProfile,
+    acquired:document.getElementById('p-date').value||today(),
+    notes:document.getElementById('p-notes').value.trim(),intervals};
+  if(editingId){
+    plants=plants.map(p=>p.id===editingId?{...p,...data}:p);
+  }else{
+    const id=Date.now();
+    plants.push({id,logs:[],...data});selectedId=id;
+  }
+  saveAll();render();closeModal('modal-plant');
+}
+
+// log modal
+function openAddLog(){
+  if(!selectedId)return;
+  selType='repot';pendingLogPhotos=[];
+  document.getElementById('l-date').value=today();
+  document.getElementById('l-note').value='';
+  renderTypeGrid();renderLogThumbs();
+  openModal('modal-log');
+}
+function renderTypeGrid(){
+  document.getElementById('type-grid').innerHTML=CARE_TYPES.map(ct=>
+    `<button class="typebtn" onclick="pickType('${ct.key}')"
+      style="border-color:${ct.key===selType?ct.color:'var(--bd)'};background:${ct.key===selType?ct.color+'15':'#fff'}">
+      <span style="font-size:17px">${ct.emoji}</span>
+      <span style="font-size:12px;font-weight:${ct.key===selType?700:400};color:${ct.color}">${ct.label}</span>
+    </button>`
+  ).join('');
+}
+function pickType(k){selType=k;renderTypeGrid();}
+async function handleLogPhotos(e){
+  for(const f of Array.from(e.target.files)){pendingLogPhotos.push(await compressImage(f,800,0.75));}
+  renderLogThumbs();
+}
+function renderLogThumbs(){
+  document.getElementById('log-thumbs').innerHTML=pendingLogPhotos.map((b,i)=>
+    `<div class="thumbwrap"><img class="thumb" src="${b}" alt=""><div class="thumbdel" onclick="pendingLogPhotos.splice(${i},1);renderLogThumbs()">×</div></div>`
+  ).join('');
+}
+function saveLog(){
+  const date=document.getElementById('l-date').value;if(!date)return;
+  const log={id:Date.now(),type:selType,date,note:document.getElementById('l-note').value.trim(),photos:[...pendingLogPhotos]};
+  plants=plants.map(p=>p.id===selectedId?{...p,logs:[...p.logs,log]}:p);
+  saveAll();render();closeModal('modal-log');
+}
+
+// export/import
+function exportData(){
+  const json=JSON.stringify(plants,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`สมุดต้นไม้_${today()}.json`;a.click();URL.revokeObjectURL(url);
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      const arr=Array.isArray(data)?data:data.plants;
+      if(!Array.isArray(arr))throw new Error();
+      const ok=confirm(`พบ ${arr.length} ต้นไม้\nOK = รวมกับข้อมูลเดิม\nCancel = แทนที่ข้อมูลเดิม`);
+      if(ok){const ids=new Set(plants.map(p=>p.id));plants=[...plants,...arr.filter(p=>!ids.has(p.id))];}
+      else{plants=arr;}
+      selectedId=plants.length?plants[0].id:null;
+      saveAll();render();
+    }catch{alert('ไฟล์ไม่ถูกต้อง');}
+    e.target.value='';
+  };reader.readAsText(file);
+}
+
+// lightbox
+function openLightbox(src){document.getElementById('lb-img').src=src;document.getElementById('lightbox').style.display='flex';}
+function closeLightbox(){document.getElementById('lightbox').style.display='none';}
+
+load();render();
+</script>
+
+</body>
+</html>
